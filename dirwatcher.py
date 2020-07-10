@@ -59,19 +59,19 @@ import argparse
 def create_parser():
     """Creates an argument parser object"""
     parser = argparse.ArgumentParser()
-    # 1) An argument that controls the "polling interval" (instead of hard-coding it)
-    parser.add_argument('int', help='controls the polling interval')
-    # 2) An argument that specifics the "magic_string" to search for
-    parser.add_argument('magic', help='specifies the magic str to search for')
-    # 3) An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
-    parser.add_argument('ext', help='filters file extension to search within')
-    # 4) An argument to specify the "directory to watch" (this directory may not yet exist!)
-    parser.add_argument('dir', help='directory to watch')
+    # An argument to specify the "directory to watch" (this directory may not yet exist!)
+    parser.add_argument('-dir', help='directory to watch')
+    # An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
+    parser.add_argument('-ext', help='filters file extension to search within')
+    # An argument that controls the "polling interval" (instead of hard-coding it)
+    parser.add_argument('-int', help='controls the polling interval')
+    # An argument that specifics the "magic_string" to search for
+    parser.add_argument('-magic', help='specifies the magic str to search for')
 
     return parser
 
 
-exit_flag = False
+# exit_flag = False
 
 
 def signal_handler(sig_num, frame):
@@ -84,29 +84,37 @@ def signal_handler(sig_num, frame):
     """
 
     # log the associated signal name
-    logger.warn('Received ' + signal.Signals(sig_num).name)
-    exit_flag = True
+    # logger.warn('Received ' + signal.Signals(sig_num).name)
+    # exit_flag = True
 
 
 def main():
+    parser = create_parser()
+    args = parser.parse_args()
+    print(args)
+
     # Hook into these two signals from the OS
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
+    # signal.signal(signal.SIGINT, signal_handler)
+    # signal.signal(signal.SIGTERM, signal_handler)
     # Now my signal_handler will get called if OS sends
     # either of these to my process
 
-    while not exit_flag:
-        try:
-            # call my directory watching function
-            pass
-        except Exception as e:
-            # This is an UNHANDLED exception
-            # Log an ERROR level message here
-            pass
+    # while not exit_flag:
+    #     try:
+    #         # call my directory watching function
+    #         pass
+    #     except Exception as e:
+    #         # This is an UNHANDLED exception
+    #         # Log an ERROR level message here
+    #         pass
 
-        # put a sleep inside my while loop so I don't peg the cpu usage at 100%
-        time.sleep(polling_interval)
+    # put a sleep inside my while loop so I don't peg the cpu usage at 100%
+    # time.sleep(polling_interval)
 
     # final exit point happens here
     # Log a message that we are shutting down
     # Include the overall uptime since program start
+
+
+if __name__ == "__main__":
+    main()
