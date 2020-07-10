@@ -2,10 +2,10 @@
 DEV PLAN
 1) Command line args to monitor given directory for text files created within monitored directory
     a) Create versatile command line argument parser that can handle these options:
-        1) An argument that controls the "polling interval" (instead of hard-coding it)
-        2) An argument that specifics the "magic_string" to search for
-        3) An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
-        4) An argument to specify the "directory to watch" (this directory may not yet exist!)
+       X An argument that controls the "polling interval" (instead of hard-coding it)
+       X An argument that specifics the "magic_string" to search for
+       X An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
+       X An argument to specify the "directory to watch" (this directory may not yet exist!)
     
 2) Continually search within all files in directory for "magic_string" as command line argument
     a) Implement using a timed polling loop (HINT: "if" statement):
@@ -55,23 +55,28 @@ import time
 import logging
 import argparse
 
+author = "Kevin Blount"
+
 
 def create_parser():
     """Creates an argument parser object"""
     parser = argparse.ArgumentParser()
     # An argument to specify the "directory to watch" (this directory may not yet exist!)
-    parser.add_argument('-dir', help='directory to watch')
+    parser.add_argument('-dir', action='store', help='directory to watch')
     # An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
-    parser.add_argument('-ext', help='filters file extension to search within')
+    parser.add_argument(
+        '-ext', action='store', help='filters file extension to search within')
     # An argument that controls the "polling interval" (instead of hard-coding it)
-    parser.add_argument('-int', help='controls the polling interval')
+    parser.add_argument('-int', action='store', type=float,
+                        help='controls the polling interval')
     # An argument that specifics the "magic_string" to search for
-    parser.add_argument('-magic', help='specifies the magic str to search for')
+    parser.add_argument(
+        '-magic', action='store', help='specifies the magic str to search for')
 
     return parser
 
 
-# exit_flag = False
+exit_flag = False
 
 
 def signal_handler(sig_num, frame):
@@ -84,29 +89,34 @@ def signal_handler(sig_num, frame):
     """
 
     # log the associated signal name
-    # logger.warn('Received ' + signal.Signals(sig_num).name)
-    # exit_flag = True
+
+    logging.warn('Received ' + signal.signal(sig_num).name)
+
+    exit_flag = True
 
 
 def main():
     parser = create_parser()
     args = parser.parse_args()
-    print(args)
+    # You can access args using dot notation like so:
+    print(f"Directory to watch: {args.dir}")
+    print(f"File extension to search within is: {args.ext}")
+    print(f"Polling interval given is: {args.int}")
+    print(f"Magic string is: {args.magic}")
 
     # Hook into these two signals from the OS
-    # signal.signal(signal.SIGINT, signal_handler)
-    # signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
     # Now my signal_handler will get called if OS sends
     # either of these to my process
 
-    # while not exit_flag:
-    #     try:
-    #         # call my directory watching function
-    #         pass
-    #     except Exception as e:
-    #         # This is an UNHANDLED exception
-    #         # Log an ERROR level message here
-    #         pass
+    while not exit_flag:
+        try:
+            # call my directory watching function
+            pass
+        except Exception as e:
+            # This is an UNHANDLED exception
+            logging.warn('Received ' + signal.signal(sig_num).name)
 
     # put a sleep inside my while loop so I don't peg the cpu usage at 100%
     # time.sleep(polling_interval)
