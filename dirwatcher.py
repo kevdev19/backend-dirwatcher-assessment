@@ -56,6 +56,21 @@ import logging
 import argparse
 
 
+def create_parser():
+    """Creates an argument parser object"""
+    parser = argparse.ArgumentParser()
+    # 1) An argument that controls the "polling interval" (instead of hard-coding it)
+    parser.add_argument('int', help='controls the polling interval')
+    # 2) An argument that specifics the "magic_string" to search for
+    parser.add_argument('magic', help='specifies the magic str to search for')
+    # 3) An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
+    parser.add_argument('ext', help='filters file extension to search within')
+    # 4) An argument to specify the "directory to watch" (this directory may not yet exist!)
+    parser.add_argument('dir', help='directory to watch')
+
+    return parser
+
+
 exit_flag = False
 
 
