@@ -6,7 +6,7 @@ DEV PLAN
        X An argument that specifics the "magic_string" to search for
        X An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
        X An argument to specify the "directory to watch" (this directory may not yet exist!)
-    
+
 2) Continually search within all files in directory for "magic_string" as command line argument
     a) Implement using a timed polling loop (HINT: "if" statement):
         if "magic_string" in "file":
@@ -18,7 +18,7 @@ DEV PLAN
         -Only new content will be added to the end of the file. You WON'T have to continually re-check sections fo a file
     -Program should terminate itself when catching SIGTERM and SIGINT signals (OS Signals)
         -OS will send signal event to process it wants to terminate from outside
-        -Program will only acton those signals if it is listening for them
+        -Program will only act on those signals if it is listening for them
         -Be sure to log a termination msg
         -Handling OS signals and polling directory being watched will be two separate functions
         -You won't be getting an OS signal when files are created or deleted
@@ -27,7 +27,7 @@ DEV PLAN
     b) Keep track of last line read
     c) When opening and reading file, skip over all the lines you've previously examined
     d) Synchronize DICTIONARY MODEL:
-        1) for "every file" in "directory": 
+        1) for "every file" in "directory":
                 add it to your "dictionary" if not already there
                 exclude files without proper file extensions
                 Report new files added to dictionary
@@ -54,29 +54,14 @@ import signal
 import time
 import logging
 import argparse
+import os
+import sys
+
 
 author = "Kevin Blount"
 
-
-def create_parser():
-    """Creates an argument parser object"""
-    parser = argparse.ArgumentParser()
-    # An argument to specify the "directory to watch" (this directory may not yet exist!)
-    parser.add_argument('-dir', action='store', help='directory to watch')
-    # An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
-    parser.add_argument(
-        '-ext', action='store', help='filters file extension to search within')
-    # An argument that controls the "polling interval" (instead of hard-coding it)
-    parser.add_argument('-int', action='store', type=float,
-                        help='controls the polling interval')
-    # An argument that specifics the "magic_string" to search for
-    parser.add_argument(
-        '-magic', action='store', help='specifies the magic str to search for')
-
-    return parser
-
-
 exit_flag = False
+logger = logging.getLogger(__name__)
 
 
 def signal_handler(sig_num, frame):
@@ -89,10 +74,36 @@ def signal_handler(sig_num, frame):
     """
 
     # log the associated signal name
-
-    logging.warn('Received ' + signal.signal(sig_num).name)
-
+    logger.warning('Received ' + signal.Signals(sig_num).name)
+    global exit_flag
     exit_flag = True
+
+
+def create_parser():
+    """Creates an argument parser object"""
+    parser = argparse.ArgumentParser()
+    # An argument to specify the "directory to watch" (this directory may not yet exist!)
+    parser.add_argument('-dir', default='./', action='store',
+                        help='directory to watch')
+    # An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
+    parser.add_argument(
+        '-ext', action='store', help='filters file extension to search within')
+    # An argument that controls the "polling interval" (instead of hard-coding it)
+    parser.add_argument('-int', default=1.0, action='store', type=float,
+                        help='controls the polling interval')
+    # An argument that specifics the "magic_string" to search for
+    parser.add_argument(
+        'magic', action='store', help='specifies the magic str to search for')
+
+    return parser
+
+
+def watch_directory(dir):
+    try:
+        with os.scandir(dir) as d:
+            pass
+    except FileNotFoundError:
+        logger.error(f'No directory found {dir}')
 
 
 def main():
@@ -108,18 +119,13 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     # Now my signal_handler will get called if OS sends
-    # either of these to my process
+    # either of these to my process.
 
     while not exit_flag:
-        try:
-            # call my directory watching function
-            pass
-        except Exception as e:
-            # This is an UNHANDLED exception
-            logging.warn('Received ' + signal.signal(sig_num).name)
+        watch_directory(args.dir)
 
-    # put a sleep inside my while loop so I don't peg the cpu usage at 100%
-    # time.sleep(polling_interval)
+        # put a sleep inside my while loop so I don't peg the cpu usage at 100%
+        time.sleep(args.int)
 
     # final exit point happens here
     # Log a message that we are shutting down
