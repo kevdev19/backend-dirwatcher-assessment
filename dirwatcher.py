@@ -85,12 +85,18 @@ def signal_handler(sig_num, frame):
     global exit_flag
     exit_flag = True
 
+# relative path
+# root
+
+# absolute path
+# /Users/kevin/kenzie-assessments/Q3/sprint5A/backend-dirwatcher-assessment/root
+
 
 def create_parser():
     """Creates an argument parser object"""
     parser = argparse.ArgumentParser()
     # An argument to specify the "directory to watch" (this directory may not yet exist!)
-    parser.add_argument('-dir', default='./', action='store',
+    parser.add_argument('-dir', default='/', action='store',
                         help='directory to watch')
     # An argument that filters what kind of "file extension" to search within (i.e., .txt, .log)
     parser.add_argument(
@@ -113,6 +119,9 @@ def watch_directory(dir):
         logger.error(f'No directory found {dir}')
 
 
+start_time = time.time()
+
+
 def main():
     parser = create_parser()
     args = parser.parse_args()
@@ -121,6 +130,14 @@ def main():
     print(f"File extension to search within is: {args.ext}")
     print(f"Polling interval given is: {args.int}")
     print(f"Magic string is: {args.magic}")
+
+    start_banner = f"""
+    -------------------------------------------------------------------
+    Starting {__file__}
+    on:  {time.ctime(start_time)}
+    -------------------------------------------------------------------
+    """
+    logger.info(start_banner)
 
     # Hook into these two signals from the OS
     signal.signal(signal.SIGINT, signal_handler)
@@ -135,7 +152,16 @@ def main():
         time.sleep(args.int)
 
     # final exit point happens here
-    # Log a message that we are shutting down
+
+    stop_banner = f"""
+    -------------------------------------------------------------------
+    Stopped {__file__}
+    Uptime was {time.time() - start_time}
+    -------------------------------------------------------------------
+    """
+
+    logger.info(stop_banner)
+
     # Include the overall uptime since program start
 
 
