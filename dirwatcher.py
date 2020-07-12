@@ -67,8 +67,8 @@ def watch_directory(dir):
         with os.scandir(dir) as d:
             if d:
                 logger.info(f'found directory {dir}')
-    except FileNotFoundError:
-        logger.error(f'directory {dir} does not exist')
+    except FileNotFoundError as e:
+        logger.error(f'{e}')
 
 
 start_time = time.time()
