@@ -132,10 +132,10 @@ def main():
     print(f"Magic string is: {args.magic}")
 
     start_banner = f"""
-    -------------------------------------------------------------------
+    {'-' * 70}
     Starting {__file__}
     on:  {time.ctime(start_time)}
-    -------------------------------------------------------------------
+    {'-' * 70}
     """
     logger.info(start_banner)
 
@@ -154,10 +154,10 @@ def main():
     # final exit point happens here
 
     stop_banner = f"""
-    -------------------------------------------------------------------
+    {'-' * 70}
     Stopped {__file__}
     Uptime was {time.time() - start_time}
-    -------------------------------------------------------------------
+    {'-' * 70}
     """
 
     logger.info(stop_banner)
