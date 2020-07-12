@@ -1,4 +1,9 @@
-
+"""
+TODO:
+Model contents of directory using a dictionary
+{filename: last line number read during previous polling iteration}
+SEE RUBRIC
+"""
 
 import signal
 import time
