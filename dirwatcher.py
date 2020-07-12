@@ -65,9 +65,10 @@ def create_parser():
 def watch_directory(dir):
     try:
         with os.scandir(dir) as d:
-            pass
+            if d:
+                logger.info(f'found directory {dir}')
     except FileNotFoundError:
-        logger.error(f'No directory found {dir}')
+        logger.error(f'directory {dir} does not exist')
 
 
 start_time = time.time()
