@@ -83,15 +83,15 @@ def main():
     parser = create_parser()
     args = parser.parse_args()
     # You can access args using dot notation like so:
-    print(f"Directory to watch: {args.dir}")
-    print(f"File extension to search within is: {args.ext}")
-    print(f"Polling interval given is: {args.int}")
-    print(f"Magic string is: {args.magic}")
 
     start_banner = f"""
     {'-' * 70}
     Starting {__file__}
-    on:  {time.ctime(start_time)}
+    on:  {time.ctime(start_time)}\n
+    Directory to watch: {args.dir}
+    File extension to search within: {args.ext}
+    Polling interval: {args.int}
+    Magic string is: {args.magic}
     {'-' * 70}
     """
     logger.info(start_banner)
@@ -113,7 +113,7 @@ def main():
     stop_banner = f"""
     {'-' * 70}
     Stopped {__file__}
-    Uptime was {time.time() - start_time}
+    Uptime was {time.time() - start_time} sec
     {'-' * 70}
     """
 
