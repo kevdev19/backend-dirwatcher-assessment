@@ -70,7 +70,7 @@ def create_parser():
     return parser
 
 
-def watch_directory(dir):
+def watch_directory(dir, file_ext):
     """
     This watches for a given directory during polling.
     :param dir: The directory given by command line argument parser.
@@ -91,10 +91,13 @@ def detect_added_files(file_ext, dir):
     :param dir: The directory given by command line argument parser.
     :return None
     """
+    file_dict = {}
     try:
         for file in os.listdir(dir):
             if file.endswith(file_ext):
                 logger.info(f'found file with extension {file_ext} in {dir}')
+                file_dict[file] = "line #"
+                logger.info(f'dictionary contents {file_dict}')
     except FileNotFoundError as e:
         logger.error(f'{e}')
 
@@ -126,9 +129,8 @@ def main():
     # either of these to my process.
 
     while not exit_flag:
-        if
-        watch_directory(args.dir)
-        scan_single_file(args.ext, args.dir)
+        watch_directory(args.dir, args.ext)
+        detect_added_files(args.ext, args.dir)
         # put a sleep inside my while loop so I don't peg the cpu usage at 100%
         time.sleep(args.int)
 
