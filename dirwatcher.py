@@ -49,7 +49,10 @@ def signal_handler(sig_num, frame):
 
 
 def create_parser():
-    """Creates an argument parser object"""
+    """
+    Creates an argument parser object and command line arguments
+    used for program options
+    """
     parser = argparse.ArgumentParser()
     # argument to specify the "directory to watch" (may not yet exist!)
     parser.add_argument('-dir', default='/', action='store',
@@ -68,10 +71,30 @@ def create_parser():
 
 
 def watch_directory(dir):
+    """
+    This watches for a given directory during polling.
+    :param dir: The directory given by command line argument parser.
+    :return None
+    """
     try:
         with os.scandir(dir) as d:
             if d:
                 logger.info(f'found directory {dir}')
+    except FileNotFoundError as e:
+        logger.error(f'{e}')
+
+
+def scan_single_file(file_ext, dir):
+    """
+    This watches directory for given file extension during polling
+    :param file_ext The given file extension to search within
+    :param dir: The directory given by command line argument parser.
+    :return None
+    """
+    try:
+        for file in os.listdir(dir):
+            if file.endswith(file_ext):
+                logger.info(f'found file with extension {file_ext} in {dir}')
     except FileNotFoundError as e:
         logger.error(f'{e}')
 
@@ -104,7 +127,7 @@ def main():
 
     while not exit_flag:
         watch_directory(args.dir)
-
+        scan_single_file(args.ext, args.dir)
         # put a sleep inside my while loop so I don't peg the cpu usage at 100%
         time.sleep(args.int)
 
