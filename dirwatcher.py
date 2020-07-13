@@ -84,10 +84,10 @@ def watch_directory(dir):
         logger.error(f'{e}')
 
 
-def scan_single_file(file_ext, dir):
+def detect_added_files(file_ext, dir):
     """
     This watches directory for given file extension during polling
-    :param file_ext The given file extension to search within
+    :param file_ext The given file extension to watch for and scan
     :param dir: The directory given by command line argument parser.
     :return None
     """
@@ -126,6 +126,7 @@ def main():
     # either of these to my process.
 
     while not exit_flag:
+        if
         watch_directory(args.dir)
         scan_single_file(args.ext, args.dir)
         # put a sleep inside my while loop so I don't peg the cpu usage at 100%
